@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -50,6 +53,12 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
         }
     };
 
+    private List<File> mFilesList;
+
+    public ExplorerListAdapter(List<File> fileList){
+        mFilesList = fileList;
+    }
+
     @Override
     public FileItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_item, parent, false);
@@ -58,12 +67,12 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
 
     @Override
     public void onBindViewHolder(FileItemViewHolder holder, int position) {
-        holder.bind("Item #" + position, listener, longClickListener);
+        holder.bind(mFilesList.get(position), listener, longClickListener);
     }
 
     @Override
     public int getItemCount() {
-        return 50;
+        return mFilesList.size();
     }
 
     static class FileItemViewHolder extends RecyclerView.ViewHolder {
@@ -77,19 +86,19 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
             ButterKnife.bind(this, v);
         }
 
-        public void bind(final String text, final OnItemClickListener listener, final OnItemLongClickListener longClickListener){
-            icon.setImageDrawable(icon.getContext().getResources().getDrawable(R.mipmap.ic_launcher));
-            itemName.setText(text);
+        public void bind(final File file, final OnItemClickListener listener, final OnItemLongClickListener longClickListener){
+            icon.setImageDrawable(icon.getContext().getResources().getDrawable(file.isDirectory() ? android.R.drawable.ic_menu_gallery : R.mipmap.ic_launcher));
+            itemName.setText(file.getName());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onItemClick(text);
+                    listener.onItemClick(file);
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    longClickListener.onItemLongClick(itemView, text);
+                    longClickListener.onItemLongClick(itemView, file);
                     return false;
                 }
             });
