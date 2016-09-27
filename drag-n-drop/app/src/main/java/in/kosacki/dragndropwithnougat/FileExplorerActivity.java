@@ -15,11 +15,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +34,9 @@ public class FileExplorerActivity extends AppCompatActivity {
     private final static String TAG = FileExplorerActivity.class.getSimpleName();
 
     private final static int READ_EXTERNAL_STORAGE_REQUEST_CODE = 500;
+
+    private File currentPath;
+    private MenuItem up;
 
     @BindView(R.id.explorer_recycle_view)
     RecyclerView filesList;
@@ -43,6 +51,8 @@ public class FileExplorerActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         filesList.setLayoutManager(llm);
+
+        EventBus.getDefault().register(this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -102,15 +112,45 @@ public class FileExplorerActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        up = menu.findItem(R.id.action_up);
+        up.setEnabled(false);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_up){
+            if(currentPath.getParent() == null){
+                Toast.makeText(this, "We are in the root directory now.", Toast.LENGTH_SHORT).show();
+                return super.onOptionsItemSelected(item);
+            }
+            EventBus.getDefault().post(new NewPathEvent(currentPath.getParent()));
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void populateFilesListForDirectory(File f) {
         Log.d(TAG, "yey!");
 
         ArrayList<File> inFiles = new ArrayList<>();
-        File[] files = f.listFiles();
+        File[] files = {};
+        files = f.listFiles();
         inFiles.addAll(new ArrayList<File>(Arrays.asList(files)));
 
         filesList.setAdapter(new ExplorerListAdapter(inFiles));
+        currentPath = f;
+    }
 
+    @Subscribe
+    public void onNewPath(NewPathEvent newPathEvent){
+        Log.d("path", newPathEvent.getPath());
+        Log.d("path", Environment.getExternalStorageDirectory().getPath());
+        up.setEnabled(!newPathEvent.getPath().equals(Environment.getExternalStorageDirectory().getPath()));
+        populateFilesListForDirectory(new File(newPathEvent.getPath()));
     }
 
 }
