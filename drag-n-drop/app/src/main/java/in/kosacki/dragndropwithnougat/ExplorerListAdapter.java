@@ -90,7 +90,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
         }
 
         public void bind(final File file, final OnItemClickListener listener, final OnItemLongClickListener longClickListener){
-            icon.setImageDrawable(icon.getContext().getResources().getDrawable(file.isDirectory() ? android.R.drawable.ic_menu_gallery : R.mipmap.ic_launcher));
+            icon.setImageDrawable(icon.getContext().getResources().getDrawable(file.isDirectory() ? R.drawable.ic_folder : R.drawable.ic_file));
             itemName.setText(file.getName());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -19,12 +20,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.common.collect.Ordering;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,12 +39,11 @@ public class FileExplorerActivity extends AppCompatActivity {
     private final static String TAG = FileExplorerActivity.class.getSimpleName();
 
     private final static int READ_EXTERNAL_STORAGE_REQUEST_CODE = 500;
-
-    private File currentPath;
-    private MenuItem up;
-
     @BindView(R.id.explorer_recycle_view)
     RecyclerView filesList;
+    private File currentPath;
+    private MenuItem up;
+    private boolean backPressedToExit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,8 +127,8 @@ public class FileExplorerActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_up){
-            if(currentPath.getParent() == null){
+        if (item.getItemId() == R.id.action_up) {
+            if (currentPath.getParent() == null) {
                 Toast.makeText(this, "We are in the root directory now.", Toast.LENGTH_SHORT).show();
                 return super.onOptionsItemSelected(item);
             }
@@ -134,23 +138,60 @@ public class FileExplorerActivity extends AppCompatActivity {
     }
 
     private void populateFilesListForDirectory(File f) {
-        Log.d(TAG, "yey!");
-
         ArrayList<File> inFiles = new ArrayList<>();
         File[] files = {};
         files = f.listFiles();
         inFiles.addAll(new ArrayList<File>(Arrays.asList(files)));
+        Collections.sort(inFiles, Ordering.from(new FileTypeComparator()).compound(new FileNameComparator()));
 
         filesList.setAdapter(new ExplorerListAdapter(inFiles));
         currentPath = f;
     }
 
     @Subscribe
-    public void onNewPath(NewPathEvent newPathEvent){
-        Log.d("path", newPathEvent.getPath());
-        Log.d("path", Environment.getExternalStorageDirectory().getPath());
+    public void onNewPath(NewPathEvent newPathEvent) {
         up.setEnabled(!newPathEvent.getPath().equals(Environment.getExternalStorageDirectory().getPath()));
         populateFilesListForDirectory(new File(newPathEvent.getPath()));
     }
 
+    @Override
+    public void onBackPressed() {
+        if (up.isEnabled()) {
+            onOptionsItemSelected(up);
+        } else {
+            if (backPressedToExit) {
+                super.onBackPressed();
+                return;
+            }
+
+            this.backPressedToExit = true;
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    backPressedToExit = false;
+                }
+            }, 2000);
+        }
+    }
+}
+
+class FileTypeComparator implements Comparator<File>{
+
+    @Override
+    public int compare(File file1, File file2) {
+        if(file1.isDirectory() && file2.isFile()) return -1;
+        if(file1.isDirectory() && file2.isDirectory()) return 0;
+        if(file1.isFile() && file2.isFile()) return 0;
+        return 1;
+    }
+}
+
+class FileNameComparator implements Comparator<File>{
+
+    @Override
+    public int compare(File file1, File file2) {
+        return String.CASE_INSENSITIVE_ORDER.compare(file1.getName(), file2.getName());
+    }
 }
