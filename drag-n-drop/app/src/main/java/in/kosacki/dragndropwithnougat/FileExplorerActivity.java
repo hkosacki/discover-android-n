@@ -15,7 +15,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -151,6 +150,7 @@ public class FileExplorerActivity extends AppCompatActivity {
     @Subscribe
     public void onNewPath(NewPathEvent newPathEvent) {
         up.setEnabled(!newPathEvent.getPath().equals(Environment.getExternalStorageDirectory().getPath()));
+        getSupportActionBar().setTitle(newPathEvent.getPath().substring(newPathEvent.getPath().lastIndexOf("/")+1));
         populateFilesListForDirectory(new File(newPathEvent.getPath()));
     }
 

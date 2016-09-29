@@ -37,4 +37,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.google.guava:guava:19.0'
+    compile "com.android.support:design:24.2.1"
 }
