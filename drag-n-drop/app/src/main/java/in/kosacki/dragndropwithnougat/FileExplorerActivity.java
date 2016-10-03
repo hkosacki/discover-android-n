@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -44,6 +45,9 @@ public class FileExplorerActivity extends AppCompatActivity {
     private MenuItem up;
     private boolean backPressedToExit = false;
 
+    private static final String LAST_LOCATION_KEY = "last_location";
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,12 +60,6 @@ public class FileExplorerActivity extends AppCompatActivity {
         filesList.setLayoutManager(llm);
 
         EventBus.getDefault().register(this);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -97,12 +95,27 @@ public class FileExplorerActivity extends AppCompatActivity {
         } else {
             populateFilesListForDirectory(new File(Environment.getExternalStorageDirectory().getPath()));
         }
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        outState.putString(LAST_LOCATION_KEY, currentPath.getPath());
+
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        String path = savedInstanceState.getString(LAST_LOCATION_KEY);
+        if (path != null) {
+            populateFilesListForDirectory(new File(path));
+        }
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     /*
-     * Consume the permission
-     */
+             * Consume the permission
+             */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -150,7 +163,7 @@ public class FileExplorerActivity extends AppCompatActivity {
     @Subscribe
     public void onNewPath(NewPathEvent newPathEvent) {
         up.setEnabled(!newPathEvent.getPath().equals(Environment.getExternalStorageDirectory().getPath()));
-        getSupportActionBar().setTitle(newPathEvent.getPath().substring(newPathEvent.getPath().lastIndexOf("/")+1));
+        getSupportActionBar().setTitle(newPathEvent.getPath().substring(newPathEvent.getPath().lastIndexOf("/") + 1));
         populateFilesListForDirectory(new File(newPathEvent.getPath()));
     }
 
@@ -177,18 +190,18 @@ public class FileExplorerActivity extends AppCompatActivity {
     }
 }
 
-class FileTypeComparator implements Comparator<File>{
+class FileTypeComparator implements Comparator<File> {
 
     @Override
     public int compare(File file1, File file2) {
-        if(file1.isDirectory() && file2.isFile()) return -1;
-        if(file1.isDirectory() && file2.isDirectory()) return 0;
-        if(file1.isFile() && file2.isFile()) return 0;
+        if (file1.isDirectory() && file2.isFile()) return -1;
+        if (file1.isDirectory() && file2.isDirectory()) return 0;
+        if (file1.isFile() && file2.isFile()) return 0;
         return 1;
     }
 }
 
-class FileNameComparator implements Comparator<File>{
+class FileNameComparator implements Comparator<File> {
 
     @Override
     public int compare(File file1, File file2) {

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -18,7 +19,6 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -34,18 +34,34 @@ import butterknife.ButterKnife;
 
 public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapter.FileItemViewHolder> {
 
+    boolean clickedDirectory = false;
+
     /*
      * Used to register to each adapter item, to handle click events
      */
     private OnItemClickListener listener = new OnItemClickListener() {
         @Override
-        public void onItemClick(View v, File f) {
+        public void onItemClick(View v, final File f) {
             if (f.isDirectory()) {
-                EventBus.getDefault().post(new NewPathEvent(f.getAbsolutePath()));
+                if(!clickedDirectory) {
+                    clickedDirectory = true;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            EventBus.getDefault().post(new NewPathEvent(f.getAbsolutePath()));
+                            clickedDirectory = false;
+                        }
+                    }, 100);
+                }
             } else {
                 MimeTypeMap myMime = MimeTypeMap.getSingleton();
                 Intent newIntent = new Intent(Intent.ACTION_VIEW);
-                String mimeType = myMime.getMimeTypeFromExtension(f.getName().substring(f.getName().lastIndexOf(".")));
+                String extension = f.getName().substring(f.getName().lastIndexOf("."));
+                String mimeType = myMime.getMimeTypeFromExtension(extension);
+                if(mimeType == null){
+                    Snackbar.make(v, "Can't open file. The file type is unknown.", Snackbar.LENGTH_LONG).show();
+                    return;
+                }
                 // TODO: https://inthecheesefactory.com/blog/how-to-share-access-to-file-with-fileprovider-on-android-nougat/en
                 Uri uri = FileProvider.getUriForFile(v.getContext(), BuildConfig.APPLICATION_ID + ".provider", f);
                 newIntent.setDataAndType(uri, mimeType);
@@ -59,7 +75,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
                 try {
                     v.getContext().startActivity(newIntent);
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(v.getContext(), "No handler for this type of file.", Toast.LENGTH_LONG).show();
+                    Snackbar.make(v, "Sorry, I found no handler for this type of file.", Snackbar.LENGTH_SHORT).show();
                 }
             }
         }
