@@ -26,6 +26,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import in.kosacki.dragndropwithnougat.adapter.BaseViewHolder;
+import in.kosacki.dragndropwithnougat.listeners.OnItemClickListener;
+import in.kosacki.dragndropwithnougat.listeners.OnItemLongClickListener;
 
 /**
  * Created by hubert on 26/09/16.
@@ -38,7 +40,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
     /*
      * Used to register to each adapter item, to handle click events
      */
-    private OnItemClickListener listener = new OnItemClickListener() {
+    private OnItemClickListener listener = new OnItemClickListener<File>() {
         @Override
         public void onItemClick(View v, final File f) {
             if (f.isDirectory()) {
@@ -83,7 +85,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
     /*
      * Used to register to each adapter item, to handle long click events
      */
-    private OnItemLongClickListener longClickListener = new OnItemLongClickListener() {
+    private OnItemLongClickListener longClickListener = new OnItemLongClickListener<File>() {
         @Override
         public void onItemLongClick(View view, File f) {
             if (f.isDirectory()) {
@@ -108,9 +110,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
 
     @Override
     public FileItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        FileItemViewHolder viewHolder = new FileItemViewHolder(parent);
-        viewHolder.itemView.setClickable(true);
-        return viewHolder;
+        return new FileItemViewHolder(parent);
     }
 
     @Override
@@ -146,19 +146,10 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
 
         void bind(final File file, final OnItemClickListener listener, final OnItemLongClickListener longClickListener) {
             bind(file);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.onItemClick(view, file);
-                }
-            });
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    longClickListener.onItemLongClick(itemView, file);
-                    return true;
-                }
-            });
+            setOnItemClick(file, listener);
+            setOnItemLongClick(file, longClickListener);
         }
+
     }
+
 }
