@@ -16,13 +16,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.net.URLConnection;
 import java.util.List;
 
 import butterknife.BindView;
@@ -54,10 +54,8 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
                     }, 100);
                 }
             } else {
-                MimeTypeMap myMime = MimeTypeMap.getSingleton();
                 Intent newIntent = new Intent(Intent.ACTION_VIEW);
-                String extension = f.getName().substring(f.getName().lastIndexOf("."));
-                String mimeType = myMime.getMimeTypeFromExtension(extension);
+                String mimeType = URLConnection.guessContentTypeFromName(f.getName());
                 if(mimeType == null){
                     Snackbar.make(v, "Can't open file. The file type is unknown.", Snackbar.LENGTH_LONG).show();
                     return;
