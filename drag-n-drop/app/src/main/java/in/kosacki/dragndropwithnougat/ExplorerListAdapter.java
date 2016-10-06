@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -34,7 +33,6 @@ import butterknife.ButterKnife;
 
 public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapter.FileItemViewHolder> {
 
-    boolean clickedDirectory = false;
 
     /*
      * Used to register to each adapter item, to handle click events
@@ -43,20 +41,13 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
         @Override
         public void onItemClick(View v, final File f) {
             if (f.isDirectory()) {
-                if(!clickedDirectory) {
-                    clickedDirectory = true;
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            EventBus.getDefault().post(new NewPathEvent(f.getAbsolutePath()));
-                            clickedDirectory = false;
-                        }
-                    }, 100);
+                {
+                    EventBus.getDefault().post(new NewPathEvent(f.getAbsolutePath()));
                 }
             } else {
                 Intent newIntent = new Intent(Intent.ACTION_VIEW);
                 String mimeType = URLConnection.guessContentTypeFromName(f.getName());
-                if(mimeType == null){
+                if (mimeType == null) {
                     Snackbar.make(v, "Can't open file. The file type is unknown.", Snackbar.LENGTH_LONG).show();
                     return;
                 }
@@ -85,7 +76,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
     private OnItemLongClickListener longClickListener = new OnItemLongClickListener() {
         @Override
         public void onItemLongClick(View view, File f) {
-            if(f.isDirectory()){
+            if (f.isDirectory()) {
                 Snackbar.make(view, "Sorry, no drag'n'drop support for directories", Snackbar.LENGTH_SHORT).show();
                 return;
             }
