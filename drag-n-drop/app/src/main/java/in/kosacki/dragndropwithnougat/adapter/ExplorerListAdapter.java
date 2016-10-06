@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -35,7 +34,7 @@ import in.kosacki.dragndropwithnougat.listeners.OnItemLongClickListener;
  * Created by hubert on 26/09/16.
  */
 
-public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapter.FileItemViewHolder> {
+public class ExplorerListAdapter extends BaseRecyclerAdapter<File> {
 
     boolean clickedDirectory = false;
 
@@ -104,10 +103,8 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
         }
     };
 
-    private List<File> mFilesList;
-
-    public ExplorerListAdapter(List<File> fileList) {
-        mFilesList = fileList;
+    public ExplorerListAdapter(List<File> data) {
+        super(data);
     }
 
     @Override
@@ -116,19 +113,14 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
     }
 
     @Override
-    public void onBindViewHolder(FileItemViewHolder holder, int position) {
-        holder.bind(mFilesList.get(position), listener, longClickListener);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mFilesList.size();
+    public void onBindViewHolder(BaseViewHolder<File> holder, int position) {
+        ((FileItemViewHolder) holder).bind(data.get(position), listener, longClickListener);
     }
 
     /*
      * Custom ViewHolder class
      */
-    static class FileItemViewHolder extends BaseViewHolder<File> {
+    private static class FileItemViewHolder extends BaseViewHolder<File> {
 
         @BindView(R.id.fileItemIcon)
         ImageView icon;
