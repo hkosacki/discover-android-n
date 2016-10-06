@@ -48,6 +48,8 @@ public class FileExplorerActivity extends AppCompatActivity {
     private MenuItem up;
     private boolean backPressedToExit = false;
 
+    private ExplorerListAdapter adapter;
+
     private static final String LAST_LOCATION_KEY = "last_location";
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -63,6 +65,9 @@ public class FileExplorerActivity extends AppCompatActivity {
         filesList.setLayoutManager(llm);
 
         EventBus.getDefault().register(this);
+
+        adapter = new ExplorerListAdapter();
+        filesList.setAdapter(adapter);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -159,7 +164,8 @@ public class FileExplorerActivity extends AppCompatActivity {
         inFiles.addAll(new ArrayList<File>(Arrays.asList(files)));
         Collections.sort(inFiles, Ordering.from(new FileTypeComparator()).compound(new FileNameComparator()));
 
-        filesList.setAdapter(new ExplorerListAdapter(inFiles));
+        adapter.setData(inFiles);
+        adapter.notifyDataSetChanged();
         currentPath = f;
     }
 

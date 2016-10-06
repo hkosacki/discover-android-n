@@ -103,6 +103,10 @@ public class ExplorerListAdapter extends BaseRecyclerAdapter<File> {
         }
     };
 
+    public ExplorerListAdapter() {
+        super(null);
+    }
+
     public ExplorerListAdapter(List<File> data) {
         super(data);
     }
