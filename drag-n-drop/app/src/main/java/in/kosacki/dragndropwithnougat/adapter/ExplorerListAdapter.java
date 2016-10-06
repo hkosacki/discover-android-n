@@ -36,12 +36,12 @@ import in.kosacki.dragndropwithnougat.listeners.OnItemLongClickListener;
 
 public class ExplorerListAdapter extends BaseRecyclerAdapter<File> {
 
-    boolean clickedDirectory = false;
+    private boolean clickedDirectory = false;
 
     /*
      * Used to register to each adapter item, to handle click events
      */
-    private OnItemClickListener listener = new OnItemClickListener<File>() {
+    private OnItemClickListener<File> listener = new OnItemClickListener<File>() {
         @Override
         public void onItemClick(View v, final File f) {
             if (f.isDirectory()) {
@@ -86,7 +86,7 @@ public class ExplorerListAdapter extends BaseRecyclerAdapter<File> {
     /*
      * Used to register to each adapter item, to handle long click events
      */
-    private OnItemLongClickListener longClickListener = new OnItemLongClickListener<File>() {
+    private OnItemLongClickListener<File> longClickListener = new OnItemLongClickListener<File>() {
         @Override
         public void onItemLongClick(View view, File f) {
             if (f.isDirectory()) {
@@ -142,7 +142,7 @@ public class ExplorerListAdapter extends BaseRecyclerAdapter<File> {
             itemName.setText(file.getName());
         }
 
-        void bind(final File file, final OnItemClickListener listener, final OnItemLongClickListener longClickListener) {
+        void bind(final File file, final OnItemClickListener<File> listener, final OnItemLongClickListener<File> longClickListener) {
             bind(file);
             setOnItemClick(file, listener);
             setOnItemLongClick(file, longClickListener);

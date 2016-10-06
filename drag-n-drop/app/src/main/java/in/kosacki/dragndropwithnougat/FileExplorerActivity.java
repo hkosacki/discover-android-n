@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -40,17 +41,17 @@ import in.kosacki.dragndropwithnougat.utils.FileTypeComparator;
 public class FileExplorerActivity extends AppCompatActivity {
 
     private final static String TAG = FileExplorerActivity.class.getSimpleName();
-
     private final static int READ_EXTERNAL_STORAGE_REQUEST_CODE = 500;
+    private static final String LAST_LOCATION_KEY = "last_location";
+
     @BindView(R.id.explorer_recycle_view)
     RecyclerView filesList;
-    private File currentPath;
-    private MenuItem up;
-    private boolean backPressedToExit = false;
 
     private ExplorerListAdapter adapter;
 
-    private static final String LAST_LOCATION_KEY = "last_location";
+    private File currentPath;
+    private MenuItem up;
+    private boolean backPressedToExit = false;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -158,6 +159,7 @@ public class FileExplorerActivity extends AppCompatActivity {
     }
 
     private void populateFilesListForDirectory(File f) {
+        Log.d(TAG, "populateFilesListForDirectory() called with: f = [" + f + "]");
         ArrayList<File> inFiles = new ArrayList<>();
         File[] files = {};
         files = f.listFiles();
