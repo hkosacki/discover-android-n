@@ -13,7 +13,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -26,7 +25,7 @@ import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
+import in.kosacki.dragndropwithnougat.adapter.BaseViewHolder;
 
 /**
  * Created by hubert on 26/09/16.
@@ -43,7 +42,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
         @Override
         public void onItemClick(View v, final File f) {
             if (f.isDirectory()) {
-                if(!clickedDirectory) {
+                if (!clickedDirectory) {
                     clickedDirectory = true;
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -58,7 +57,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
                 Intent newIntent = new Intent(Intent.ACTION_VIEW);
                 String extension = f.getName().substring(f.getName().lastIndexOf("."));
                 String mimeType = myMime.getMimeTypeFromExtension(extension);
-                if(mimeType == null){
+                if (mimeType == null) {
                     Snackbar.make(v, "Can't open file. The file type is unknown.", Snackbar.LENGTH_LONG).show();
                     return;
                 }
@@ -87,7 +86,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
     private OnItemLongClickListener longClickListener = new OnItemLongClickListener() {
         @Override
         public void onItemLongClick(View view, File f) {
-            if(f.isDirectory()){
+            if (f.isDirectory()) {
                 Snackbar.make(view, "Sorry, no drag'n'drop support for directories", Snackbar.LENGTH_SHORT).show();
                 return;
             }
@@ -109,9 +108,9 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
 
     @Override
     public FileItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_item, parent, false);
-        itemView.setClickable(true);
-        return new FileItemViewHolder(itemView);
+        FileItemViewHolder viewHolder = new FileItemViewHolder(parent);
+        viewHolder.itemView.setClickable(true);
+        return viewHolder;
     }
 
     @Override
@@ -127,20 +126,26 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
     /*
      * Custom ViewHolder class
      */
-    static class FileItemViewHolder extends RecyclerView.ViewHolder {
+    static class FileItemViewHolder extends BaseViewHolder<File> {
+
         @BindView(R.id.fileItemIcon)
         ImageView icon;
+
         @BindView(R.id.fileItemNameTextView)
         TextView itemName;
 
-        FileItemViewHolder(View v) {
-            super(v);
-            ButterKnife.bind(this, v);
+        FileItemViewHolder(ViewGroup viewGroup) {
+            super(viewGroup, R.layout.file_item);
+        }
+
+        @Override
+        public void bind(final File file) {
+            icon.setImageDrawable(ContextCompat.getDrawable(icon.getContext(), file.isDirectory() ? R.drawable.ic_folder : R.drawable.ic_file));
+            itemName.setText(file.getName());
         }
 
         void bind(final File file, final OnItemClickListener listener, final OnItemLongClickListener longClickListener) {
-            icon.setImageDrawable(ContextCompat.getDrawable(icon.getContext(), file.isDirectory() ? R.drawable.ic_folder : R.drawable.ic_file));
-            itemName.setText(file.getName());
+            bind(file);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
