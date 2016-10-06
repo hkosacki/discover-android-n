@@ -32,6 +32,8 @@ import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.kosacki.dragndropwithnougat.adapter.ExplorerListAdapter;
+import in.kosacki.dragndropwithnougat.events.NewPathEvent;
 import in.kosacki.dragndropwithnougat.utils.FileNameComparator;
 import in.kosacki.dragndropwithnougat.utils.FileTypeComparator;
 

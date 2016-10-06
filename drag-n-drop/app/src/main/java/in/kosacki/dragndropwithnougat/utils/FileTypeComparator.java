@@ -15,5 +15,5 @@ public class FileTypeComparator implements Comparator<File> {
         if (file1.isFile() && file2.isFile()) return 0;
         return 1;
     }
-    
+
 }
