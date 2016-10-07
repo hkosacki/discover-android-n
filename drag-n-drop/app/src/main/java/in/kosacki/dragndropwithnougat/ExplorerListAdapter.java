@@ -25,7 +25,9 @@ import java.net.URLConnection;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
+import in.kosacki.dragndropwithnougat.listeners.OnItemClickListener;
+import in.kosacki.dragndropwithnougat.listeners.OnItemLongClickListener;
+import in.kosacki.dragndropwithnougat.viewholders.BaseViewHolder;
 
 /**
  * Created by hubert on 26/09/16.
@@ -37,7 +39,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
     /*
      * Used to register to each adapter item, to handle click events
      */
-    private OnItemClickListener listener = new OnItemClickListener() {
+    private OnItemClickListener listener = new OnItemClickListener<File>() {
         @Override
         public void onItemClick(View v, final File f) {
             if (f.isDirectory()) {
@@ -73,7 +75,7 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
     /*
      * Used to register to each adapter item, to handle long click events
      */
-    private OnItemLongClickListener longClickListener = new OnItemLongClickListener() {
+    private OnItemLongClickListener longClickListener = new OnItemLongClickListener<File>() {
         @Override
         public void onItemLongClick(View view, File f) {
             if (f.isDirectory()) {
