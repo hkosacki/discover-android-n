@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -33,24 +32,26 @@ import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import in.kosacki.dragndropwithnougat.adapter.ExplorerListAdapter;
+import in.kosacki.dragndropwithnougat.adapters.ExplorerListAdapter;
+import in.kosacki.dragndropwithnougat.utils.comparators.FileNameComparator;
+import in.kosacki.dragndropwithnougat.utils.comparators.FileTypeComparator;
 import in.kosacki.dragndropwithnougat.events.NewPathEvent;
-import in.kosacki.dragndropwithnougat.utils.FileNameComparator;
-import in.kosacki.dragndropwithnougat.utils.FileTypeComparator;
 
 public class FileExplorerActivity extends AppCompatActivity {
 
     private final static String TAG = FileExplorerActivity.class.getSimpleName();
+
     private final static int READ_EXTERNAL_STORAGE_REQUEST_CODE = 500;
     private static final String LAST_LOCATION_KEY = "last_location";
 
     @BindView(R.id.explorer_recycle_view)
     RecyclerView filesList;
 
-    private ExplorerListAdapter adapter;
+    private ExplorerListAdapter listAdapter;
 
     private File currentPath;
     private MenuItem up;
+
     private boolean backPressedToExit = false;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -67,8 +68,8 @@ public class FileExplorerActivity extends AppCompatActivity {
 
         EventBus.getDefault().register(this);
 
-        adapter = new ExplorerListAdapter();
-        filesList.setAdapter(adapter);
+        listAdapter = new ExplorerListAdapter(null);
+        filesList.setAdapter(listAdapter);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -106,12 +107,11 @@ public class FileExplorerActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        outState.putString(LAST_LOCATION_KEY, currentPath.getPath());
-
-        super.onSaveInstanceState(outState, outPersistentState);
-    }
+    //    @Override
+    //    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+    //        outState.putString(LAST_LOCATION_KEY, currentPath.getPath());
+    //        super.onSaveInstanceState(outState, outPersistentState);
+    //    }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -123,8 +123,8 @@ public class FileExplorerActivity extends AppCompatActivity {
     }
 
     /*
-             * Consume the permission
-             */
+     * Consume the permission
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -161,13 +161,12 @@ public class FileExplorerActivity extends AppCompatActivity {
     private void populateFilesListForDirectory(File f) {
         Log.d(TAG, "populateFilesListForDirectory() called with: f = [" + f + "]");
         ArrayList<File> inFiles = new ArrayList<>();
-        File[] files = {};
-        files = f.listFiles();
-        inFiles.addAll(new ArrayList<File>(Arrays.asList(files)));
+        File[] files = f.listFiles();
+        inFiles.addAll(new ArrayList<>(Arrays.asList(files)));
         Collections.sort(inFiles, Ordering.from(new FileTypeComparator()).compound(new FileNameComparator()));
 
-        adapter.setData(inFiles);
-        adapter.notifyDataSetChanged();
+        listAdapter.setData(inFiles);
+        listAdapter.notifyDataSetChanged();
         currentPath = f;
     }
 
@@ -187,10 +186,8 @@ public class FileExplorerActivity extends AppCompatActivity {
                 super.onBackPressed();
                 return;
             }
-
             this.backPressedToExit = true;
             Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

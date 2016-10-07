@@ -1,4 +1,4 @@
-package in.kosacki.dragndropwithnougat.adapter;
+package in.kosacki.dragndropwithnougat.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

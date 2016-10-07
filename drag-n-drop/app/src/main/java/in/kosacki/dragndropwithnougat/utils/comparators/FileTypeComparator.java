@@ -1,10 +1,10 @@
-package in.kosacki.dragndropwithnougat.utils;
+package in.kosacki.dragndropwithnougat.utils.comparators;
 
 import java.io.File;
 import java.util.Comparator;
 
 /**
- * Created by kryst on 06.10.2016.
+ * Created by hubert on 07/10/16.
  */
 public class FileTypeComparator implements Comparator<File> {
 
@@ -15,5 +15,4 @@ public class FileTypeComparator implements Comparator<File> {
         if (file1.isFile() && file2.isFile()) return 0;
         return 1;
     }
-
 }

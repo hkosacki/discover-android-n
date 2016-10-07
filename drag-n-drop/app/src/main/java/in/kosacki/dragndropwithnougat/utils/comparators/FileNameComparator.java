@@ -1,10 +1,10 @@
-package in.kosacki.dragndropwithnougat.utils;
+package in.kosacki.dragndropwithnougat.utils.comparators;
 
 import java.io.File;
 import java.util.Comparator;
 
 /**
- * Created by kryst on 06.10.2016.
+ * Created by hubert on 07/10/16.
  */
 public class FileNameComparator implements Comparator<File> {
 
@@ -12,5 +12,4 @@ public class FileNameComparator implements Comparator<File> {
     public int compare(File file1, File file2) {
         return String.CASE_INSENSITIVE_ORDER.compare(file1.getName(), file2.getName());
     }
-
 }
