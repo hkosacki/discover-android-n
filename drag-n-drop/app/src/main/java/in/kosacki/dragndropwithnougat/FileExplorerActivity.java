@@ -39,14 +39,16 @@ public class FileExplorerActivity extends AppCompatActivity {
 
     private final static String TAG = FileExplorerActivity.class.getSimpleName();
 
+    private final static String LAST_LOCATION_KEY = "last_location";
     private final static int READ_EXTERNAL_STORAGE_REQUEST_CODE = 500;
-    @BindView(R.id.explorer_recycle_view)
-    RecyclerView filesList;
+
     private File currentPath;
     private MenuItem up;
+
     private boolean backPressedToExit = false;
 
-    private static final String LAST_LOCATION_KEY = "last_location";
+    @BindView(R.id.explorer_recycle_view)
+    RecyclerView filesList;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -101,7 +103,6 @@ public class FileExplorerActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         outState.putString(LAST_LOCATION_KEY, currentPath.getPath());
-
         super.onSaveInstanceState(outState, outPersistentState);
     }
 
@@ -115,8 +116,8 @@ public class FileExplorerActivity extends AppCompatActivity {
     }
 
     /*
-             * Consume the permission
-             */
+     * Consume the permission
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -152,9 +153,8 @@ public class FileExplorerActivity extends AppCompatActivity {
 
     private void populateFilesListForDirectory(File f) {
         ArrayList<File> inFiles = new ArrayList<>();
-        File[] files = {};
-        files = f.listFiles();
-        inFiles.addAll(new ArrayList<File>(Arrays.asList(files)));
+        File[] files = f.listFiles();
+        inFiles.addAll(new ArrayList<>(Arrays.asList(files)));
         Collections.sort(inFiles, Ordering.from(new FileTypeComparator()).compound(new FileNameComparator()));
 
         filesList.setAdapter(new ExplorerListAdapter(inFiles));
@@ -177,10 +177,8 @@ public class FileExplorerActivity extends AppCompatActivity {
                 super.onBackPressed();
                 return;
             }
-
             this.backPressedToExit = true;
             Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
