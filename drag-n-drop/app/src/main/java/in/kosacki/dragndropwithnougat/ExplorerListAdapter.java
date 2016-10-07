@@ -93,7 +93,10 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
 
     private List<File> mFilesList;
 
-    ExplorerListAdapter(List<File> fileList) {
+    public ExplorerListAdapter(){
+    }
+
+    public ExplorerListAdapter(List<File> fileList) {
         mFilesList = fileList;
     }
 
@@ -112,6 +115,10 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
     @Override
     public int getItemCount() {
         return mFilesList.size();
+    }
+
+    public void setData(List<File> dataList){
+        mFilesList = dataList;
     }
 
     /*

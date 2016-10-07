@@ -42,6 +42,7 @@ public class FileExplorerActivity extends AppCompatActivity {
     private final static String LAST_LOCATION_KEY = "last_location";
     private final static int READ_EXTERNAL_STORAGE_REQUEST_CODE = 500;
 
+    private ExplorerListAdapter listAdapter;
     private File currentPath;
     private MenuItem up;
 
@@ -63,6 +64,9 @@ public class FileExplorerActivity extends AppCompatActivity {
         filesList.setLayoutManager(llm);
 
         EventBus.getDefault().register(this);
+
+        listAdapter = new ExplorerListAdapter();
+        filesList.setAdapter(listAdapter);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -157,7 +161,8 @@ public class FileExplorerActivity extends AppCompatActivity {
         inFiles.addAll(new ArrayList<>(Arrays.asList(files)));
         Collections.sort(inFiles, Ordering.from(new FileTypeComparator()).compound(new FileNameComparator()));
 
-        filesList.setAdapter(new ExplorerListAdapter(inFiles));
+        listAdapter.setData(inFiles);
+        listAdapter.notifyDataSetChanged();
         currentPath = f;
     }
 
