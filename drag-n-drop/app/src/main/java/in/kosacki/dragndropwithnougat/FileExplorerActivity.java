@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -32,24 +33,26 @@ import java.util.Collections;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kosacki.dragndropwithnougat.adapters.ExplorerListAdapter;
-import in.kosacki.dragndropwithnougat.comparators.FileNameComparator;
-import in.kosacki.dragndropwithnougat.comparators.FileTypeComparator;
+import in.kosacki.dragndropwithnougat.utils.comparators.FileNameComparator;
+import in.kosacki.dragndropwithnougat.utils.comparators.FileTypeComparator;
+import in.kosacki.dragndropwithnougat.events.NewPathEvent;
 
 public class FileExplorerActivity extends AppCompatActivity {
 
     private final static String TAG = FileExplorerActivity.class.getSimpleName();
 
-    private final static String LAST_LOCATION_KEY = "last_location";
     private final static int READ_EXTERNAL_STORAGE_REQUEST_CODE = 500;
+    private static final String LAST_LOCATION_KEY = "last_location";
+
+    @BindView(R.id.explorer_recycle_view)
+    RecyclerView filesList;
 
     private ExplorerListAdapter listAdapter;
+
     private File currentPath;
     private MenuItem up;
 
     private boolean backPressedToExit = false;
-
-    @BindView(R.id.explorer_recycle_view)
-    RecyclerView filesList;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -104,11 +107,11 @@ public class FileExplorerActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-//        outState.putString(LAST_LOCATION_KEY, currentPath.getPath());
-//        super.onSaveInstanceState(outState, outPersistentState);
-//    }
+    //    @Override
+    //    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+    //        outState.putString(LAST_LOCATION_KEY, currentPath.getPath());
+    //        super.onSaveInstanceState(outState, outPersistentState);
+    //    }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -156,6 +159,7 @@ public class FileExplorerActivity extends AppCompatActivity {
     }
 
     private void populateFilesListForDirectory(File f) {
+        Log.d(TAG, "populateFilesListForDirectory() called with: f = [" + f + "]");
         ArrayList<File> inFiles = new ArrayList<>();
         File[] files = f.listFiles();
         inFiles.addAll(new ArrayList<>(Arrays.asList(files)));

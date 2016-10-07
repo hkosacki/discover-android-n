@@ -1,4 +1,4 @@
-package in.kosacki.dragndropwithnougat.comparators;
+package in.kosacki.dragndropwithnougat.utils.comparators;
 
 import java.io.File;
 import java.util.Comparator;

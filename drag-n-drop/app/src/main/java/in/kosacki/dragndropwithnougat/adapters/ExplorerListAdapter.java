@@ -24,8 +24,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import in.kosacki.dragndropwithnougat.BuildConfig;
-import in.kosacki.dragndropwithnougat.NewPathEvent;
 import in.kosacki.dragndropwithnougat.R;
+import in.kosacki.dragndropwithnougat.events.NewPathEvent;
 import in.kosacki.dragndropwithnougat.listeners.OnItemClickListener;
 import in.kosacki.dragndropwithnougat.listeners.OnItemLongClickListener;
 import in.kosacki.dragndropwithnougat.viewholders.BaseViewHolder;
