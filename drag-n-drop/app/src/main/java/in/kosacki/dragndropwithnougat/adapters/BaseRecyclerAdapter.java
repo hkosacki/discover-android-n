@@ -14,20 +14,21 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter<BaseVi
 
     protected List<T> dataList;
 
-    public BaseRecyclerAdapter(List<T> data){
+    public BaseRecyclerAdapter(List<T> data) {
         dataList = data;
     }
 
     @Override
     public int getItemCount() {
-        return dataList.size();
+        return dataList != null ? dataList.size() : 0;
     }
 
-    public void setData(List<T> data){
+    public void setData(List<T> data) {
         dataList = data;
     }
 
-    public List<T> getData(){
+    public List<T> getData() {
         return dataList;
     }
+
 }
