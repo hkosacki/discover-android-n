@@ -103,6 +103,7 @@ public class FileExplorerActivity extends AppCompatActivity {
                 // result of the request.
             }
         } else {
+            setAdapterToList();
             populateFilesListForDirectory(new File(Environment.getExternalStorageDirectory().getPath()));
         }
     }
@@ -117,6 +118,7 @@ public class FileExplorerActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         String path = savedInstanceState.getString(LAST_LOCATION_KEY);
         if (path != null) {
+            setAdapterToList();
             populateFilesListForDirectory(new File(path));
         }
         super.onRestoreInstanceState(savedInstanceState);
@@ -132,9 +134,17 @@ public class FileExplorerActivity extends AppCompatActivity {
             if (grantResults[Arrays.asList(permissions).indexOf(Manifest.permission.READ_EXTERNAL_STORAGE)] == PackageManager.PERMISSION_DENIED) {
                 finish();
             } else {
+                setAdapterToList();
                 populateFilesListForDirectory(new File(Environment.getExternalStorageDirectory().getPath()));
             }
         }
+    }
+
+    private void setAdapterToList() {
+        if (listAdapter == null) {
+            listAdapter = new ExplorerListAdapter(null);
+        }
+        filesList.setAdapter(listAdapter);
     }
 
     @Override

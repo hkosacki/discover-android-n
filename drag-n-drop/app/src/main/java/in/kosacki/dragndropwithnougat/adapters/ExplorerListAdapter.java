@@ -44,9 +44,7 @@ public class ExplorerListAdapter extends BaseRecyclerAdapter<File> {
         @Override
         public void onItemClick(View v, final File f) {
             if (f.isDirectory()) {
-                {
-                    EventBus.getDefault().post(new NewPathEvent(f.getAbsolutePath()));
-                }
+                EventBus.getDefault().post(new NewPathEvent(f.getAbsolutePath()));
             } else {
                 Intent newIntent = new Intent(Intent.ACTION_VIEW);
                 String mimeType = URLConnection.guessContentTypeFromName(f.getName());
@@ -93,6 +91,7 @@ public class ExplorerListAdapter extends BaseRecyclerAdapter<File> {
         }
     };
 
+//    public ExplorerListAdapter() {}
 
     public ExplorerListAdapter(List<File> dataList){
         super(dataList);
