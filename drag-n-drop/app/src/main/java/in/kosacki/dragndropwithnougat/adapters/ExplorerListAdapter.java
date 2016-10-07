@@ -11,7 +11,6 @@ import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -35,7 +34,7 @@ import in.kosacki.dragndropwithnougat.viewholders.BaseViewHolder;
  * Created by hubert on 26/09/16.
  */
 
-public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapter.FileItemViewHolder> {
+public class ExplorerListAdapter extends BaseRecyclerAdapter<File> {
 
 
     /*
@@ -94,13 +93,9 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
         }
     };
 
-    private List<File> mFilesList;
 
-    public ExplorerListAdapter(){
-    }
-
-    public ExplorerListAdapter(List<File> fileList) {
-        mFilesList = fileList;
+    public ExplorerListAdapter(List<File> dataList){
+        super(dataList);
     }
 
     @Override
@@ -111,17 +106,9 @@ public class ExplorerListAdapter extends RecyclerView.Adapter<ExplorerListAdapte
     }
 
     @Override
-    public void onBindViewHolder(FileItemViewHolder holder, int position) {
-        holder.bind(mFilesList.get(position), listener, longClickListener);
-    }
+    public void onBindViewHolder(BaseViewHolder<File> holder, int position) {
+        ((FileItemViewHolder) holder).bind(dataList.get(position), listener, longClickListener);
 
-    @Override
-    public int getItemCount() {
-        return mFilesList.size();
-    }
-
-    public void setData(List<File> dataList){
-        mFilesList = dataList;
     }
 
     /*

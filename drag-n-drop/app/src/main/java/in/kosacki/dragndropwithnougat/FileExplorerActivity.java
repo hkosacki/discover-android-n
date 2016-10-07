@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -66,7 +65,7 @@ public class FileExplorerActivity extends AppCompatActivity {
 
         EventBus.getDefault().register(this);
 
-        listAdapter = new ExplorerListAdapter();
+        listAdapter = new ExplorerListAdapter(null);
         filesList.setAdapter(listAdapter);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -105,11 +104,11 @@ public class FileExplorerActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        outState.putString(LAST_LOCATION_KEY, currentPath.getPath());
-        super.onSaveInstanceState(outState, outPersistentState);
-    }
+//    @Override
+//    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+//        outState.putString(LAST_LOCATION_KEY, currentPath.getPath());
+//        super.onSaveInstanceState(outState, outPersistentState);
+//    }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
