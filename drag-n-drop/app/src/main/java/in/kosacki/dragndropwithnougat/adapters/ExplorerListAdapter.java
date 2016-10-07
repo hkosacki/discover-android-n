@@ -1,4 +1,4 @@
-package in.kosacki.dragndropwithnougat;
+package in.kosacki.dragndropwithnougat.adapters;
 
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -24,6 +24,9 @@ import java.net.URLConnection;
 import java.util.List;
 
 import butterknife.BindView;
+import in.kosacki.dragndropwithnougat.BuildConfig;
+import in.kosacki.dragndropwithnougat.NewPathEvent;
+import in.kosacki.dragndropwithnougat.R;
 import in.kosacki.dragndropwithnougat.listeners.OnItemClickListener;
 import in.kosacki.dragndropwithnougat.listeners.OnItemLongClickListener;
 import in.kosacki.dragndropwithnougat.viewholders.BaseViewHolder;
