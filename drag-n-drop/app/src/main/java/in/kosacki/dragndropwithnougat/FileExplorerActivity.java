@@ -29,10 +29,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.kosacki.dragndropwithnougat.comparators.FileNameComparator;
+import in.kosacki.dragndropwithnougat.comparators.FileTypeComparator;
 
 public class FileExplorerActivity extends AppCompatActivity {
 
@@ -190,21 +191,3 @@ public class FileExplorerActivity extends AppCompatActivity {
     }
 }
 
-class FileTypeComparator implements Comparator<File> {
-
-    @Override
-    public int compare(File file1, File file2) {
-        if (file1.isDirectory() && file2.isFile()) return -1;
-        if (file1.isDirectory() && file2.isDirectory()) return 0;
-        if (file1.isFile() && file2.isFile()) return 0;
-        return 1;
-    }
-}
-
-class FileNameComparator implements Comparator<File> {
-
-    @Override
-    public int compare(File file1, File file2) {
-        return String.CASE_INSENSITIVE_ORDER.compare(file1.getName(), file2.getName());
-    }
-}
