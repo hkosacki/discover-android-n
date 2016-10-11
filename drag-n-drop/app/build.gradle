@@ -6,7 +6,7 @@ android {
     buildToolsVersion "23.0.3"
     defaultConfig {
         applicationId "in.kosacki.dragndropwithnougat"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"

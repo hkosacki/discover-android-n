@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.common.collect.Ordering;
@@ -33,9 +34,9 @@ import java.util.Collections;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kosacki.dragndropwithnougat.adapters.ExplorerListAdapter;
+import in.kosacki.dragndropwithnougat.events.NewPathEvent;
 import in.kosacki.dragndropwithnougat.utils.comparators.FileNameComparator;
 import in.kosacki.dragndropwithnougat.utils.comparators.FileTypeComparator;
-import in.kosacki.dragndropwithnougat.events.NewPathEvent;
 
 public class FileExplorerActivity extends AppCompatActivity {
 
@@ -65,6 +66,21 @@ public class FileExplorerActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         filesList.setLayoutManager(llm);
+        filesList.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(final View view,
+                                       final int left, final int top, final int right, final int bottom,
+                                       final int oldLeft, final int oldTop, final int oldRight, final int oldBottom) {
+                for (int i = 0, count = filesList.getChildCount(); i < count; ++i) {
+                    final View child = filesList.getChildAt(i);
+                    int height = child.getHeight();
+                    child.setTranslationY(height);
+                    child.setAlpha(0);
+                    child.animate().translationY(0).alpha(1).setDuration(250).setStartDelay(20 * i).withLayer();
+                }
+            }
+        });
+
 
         EventBus.getDefault().register(this);
 
@@ -177,14 +193,22 @@ public class FileExplorerActivity extends AppCompatActivity {
 
         listAdapter.setData(inFiles);
         listAdapter.notifyDataSetChanged();
+        filesList.scrollToPosition(0);
         currentPath = f;
     }
 
     @Subscribe
-    public void onNewPath(NewPathEvent newPathEvent) {
-        up.setEnabled(!newPathEvent.getPath().equals(Environment.getExternalStorageDirectory().getPath()));
-        getSupportActionBar().setTitle(newPathEvent.getPath().substring(newPathEvent.getPath().lastIndexOf("/") + 1));
-        populateFilesListForDirectory(new File(newPathEvent.getPath()));
+    public void onNewPath(final NewPathEvent newPathEvent) {
+        //animate recyclerView disappear, then change directory
+        filesList.animate().alpha(0).setDuration(300).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                filesList.setAlpha(1);
+                up.setEnabled(!newPathEvent.getPath().equals(Environment.getExternalStorageDirectory().getPath()));
+                getSupportActionBar().setTitle(newPathEvent.getPath().substring(newPathEvent.getPath().lastIndexOf("/") + 1));
+                populateFilesListForDirectory(new File(newPathEvent.getPath()));
+            }
+        }).withLayer();
     }
 
     @Override
