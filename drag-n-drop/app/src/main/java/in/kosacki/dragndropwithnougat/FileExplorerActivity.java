@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
 import com.google.common.collect.Ordering;
@@ -76,7 +78,7 @@ public class FileExplorerActivity extends AppCompatActivity {
                     int height = child.getHeight();
                     child.setTranslationY(height);
                     child.setAlpha(0);
-                    child.animate().translationY(0).alpha(1).setDuration(250).setStartDelay(20 * i).withLayer();
+                    child.animate().translationY(0).alpha(1).setDuration(250).setStartDelay(20 * i).setInterpolator(new DecelerateInterpolator()).withLayer();
                 }
             }
         });
@@ -200,7 +202,7 @@ public class FileExplorerActivity extends AppCompatActivity {
     @Subscribe
     public void onNewPath(final NewPathEvent newPathEvent) {
         //animate recyclerView disappear, then change directory
-        filesList.animate().alpha(0).setDuration(300).withEndAction(new Runnable() {
+        filesList.animate().alpha(0).setDuration(300).setInterpolator(new AccelerateInterpolator()).withEndAction(new Runnable() {
             @Override
             public void run() {
                 filesList.setAlpha(1);
