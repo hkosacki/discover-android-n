@@ -7,6 +7,7 @@ android {
     defaultConfig {
         applicationId "in.kosacki.dragndropwithnougat"
         minSdkVersion 16
+        // If targeting lower than 24, then "App may not work with split-screen"
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
