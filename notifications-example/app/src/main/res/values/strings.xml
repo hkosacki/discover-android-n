@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NotificationsExample</string>
+    <string name="button_send_notification">Send notification</string>
+    <string name="label">Notifications Example</string>
+    <string name="reply_label">Reply</string>
+    <string name="notification_title">Title</string>
+    <string name="notification_message">Message</string>
+</resources>
