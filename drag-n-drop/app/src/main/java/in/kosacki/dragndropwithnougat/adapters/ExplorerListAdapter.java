@@ -88,7 +88,7 @@ public class ExplorerListAdapter extends BaseRecyclerAdapter<File> {
             View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(view);
             // start drag and drop operation for proper platform
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                view.startDragAndDrop(draggedData, dragShadowBuilder, null, View.DRAG_FLAG_OPAQUE | View.DRAG_FLAG_GLOBAL);
+                view.startDragAndDrop(draggedData, dragShadowBuilder, null, View.DRAG_FLAG_GLOBAL | View.DRAG_FLAG_GLOBAL_URI_READ);
             } else {
                 //noinspection deprecation
                 view.startDrag(draggedData, dragShadowBuilder, null, 0);
