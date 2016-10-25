@@ -81,12 +81,17 @@ public class ExplorerListAdapter extends BaseRecyclerAdapter<File> {
                 Snackbar.make(view, "Sorry, no drag'n'drop support for directories", Snackbar.LENGTH_SHORT).show();
                 return;
             }
+            // prepare drag parameters
+            ClipDescription description = new ClipDescription(f.getName(), new String[]{ClipDescription.MIMETYPE_TEXT_URILIST});
+            ClipData.Item clipDataItem = new ClipData.Item(Uri.fromFile(f));
+            ClipData draggedData = new ClipData(description, clipDataItem);
+            View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(view);
+            // start drag and drop operation for proper platform
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                view.startDragAndDrop(new ClipData(new ClipDescription(f.getName(), new String[]{ClipDescription.MIMETYPE_TEXT_URILIST}), new ClipData.Item(Uri.fromFile(f))), new View.DragShadowBuilder(view), new Object(), View.DRAG_FLAG_OPAQUE | View.DRAG_FLAG_GLOBAL);
+                view.startDragAndDrop(draggedData, dragShadowBuilder, null, View.DRAG_FLAG_OPAQUE | View.DRAG_FLAG_GLOBAL);
             } else {
                 //noinspection deprecation
-                view.startDrag(new ClipData(new ClipDescription(null,
-                        new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN}), new ClipData.Item(f.toString())), new View.DragShadowBuilder(view), new Object(), 0);
+                view.startDrag(draggedData, dragShadowBuilder, null, 0);
             }
         }
     };
