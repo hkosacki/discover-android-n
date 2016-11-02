@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Drag\'n\'drop with Nougat</string>
+    <string name="app_name">Drag\'n\'drop Explorer for Nougat</string>
+    <string name="up">Directory up</string>
 </resources>
