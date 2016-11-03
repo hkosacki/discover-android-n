@@ -14,9 +14,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-	private final String TAG = MainActivity.class.getSimpleName();
 	public static final int NOTIFICATION_ID = 1;
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
 				sendNotification();
 			}
 		});
-
-		registerReceiver(new ReplyBroadcastReceiver(), null);
 	}
 
 	private void sendNotification() {
@@ -44,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 				MainActivity.this,
 				0,
 				new Intent(MainActivity.this, ReplyBroadcastReceiver.class),
-				PendingIntent.FLAG_CANCEL_CURRENT
+				PendingIntent.FLAG_UPDATE_CURRENT
 		);
 		// Create the remote input
 		RemoteInput remoteInput = new RemoteInput.Builder(ReplyBroadcastReceiver.KEY_TEXT_REPLY)
