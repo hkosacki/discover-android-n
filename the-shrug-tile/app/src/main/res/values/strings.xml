@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">The Shrug Tile</string>
+    <string name="shrug">¯\\_(ツ)_/¯</string>
+    <string name="toast_shrug_copied">You have now a shrug in your clipboard. ¯\\_(ツ)_/¯</string>
+</resources>
