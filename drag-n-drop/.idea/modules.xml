@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/drag-n-drop.iml" filepath="$PROJECT_DIR$/drag-n-drop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/drag-receiver/drag-receiver.iml" filepath="$PROJECT_DIR$/drag-receiver/drag-receiver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/file-explorer/file-explorer.iml" filepath="$PROJECT_DIR$/file-explorer/file-explorer.iml" />
     </modules>
   </component>
 </project>
