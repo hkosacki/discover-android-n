@@ -10,12 +10,33 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.hublabs.dragreceiver.MainActivity">
 
-    <TextView
-        android:text="Please, drag here a file to have a preview of it"
+    <FrameLayout
+        android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/textView"
-        android:textAlignment="center" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/dragLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/drag_background">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorTextDrop"
+            android:textSize="24dp"
+            android:padding="24dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="Please, drag here a file to have a preview of it"
+            android:textAlignment="center" />
+    </FrameLayout>
+
 </RelativeLayout>
