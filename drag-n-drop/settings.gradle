@@ -1,1 +1,1 @@
-include ':app'
+include ':file-explorer', ':drag-receiver'
