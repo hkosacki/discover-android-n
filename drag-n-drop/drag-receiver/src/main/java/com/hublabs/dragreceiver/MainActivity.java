@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.FileUriExposedException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -27,6 +26,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -144,31 +144,46 @@ public class MainActivity extends AppCompatActivity implements View.OnDragListen
 
 	private void handleDropEvent(View view, DragEvent dragEvent) {
 		ClipData clipData = dragEvent.getClipData();
-		Uri uri = clipData.getItemAt(0).getUri();
-		String mimeType = URLConnection.guessContentTypeFromName(new File(uri.getPath()).getName());
-		if (mimeType == null) {
-			Snackbar.make(mainLayout, "Can't open file. The file type is unknown.", Snackbar.LENGTH_LONG).show();
-		} else if (mimeType.startsWith("image")) {
-			handleImage(uri);
-		} else {
-			Intent newIntent = new Intent(Intent.ACTION_VIEW);
-			Uri contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", new File(uri.getPath()));
+		ClipData.Item item = clipData.getItemAt(0);
+		Uri uri = item.getUri();
+		if (uri != null) {
+			String mimeType = URLConnection.guessContentTypeFromName(new File(uri.getPath()).getName());
+			if (mimeType == null) {
+				Snackbar.make(mainLayout, "Can't open file. The file type is unknown.", Snackbar.LENGTH_LONG).show();
+			} else if (mimeType.startsWith("image")) {
+				handleImage(uri);
+			} else {
+				Intent newIntent = new Intent(Intent.ACTION_VIEW);
+				Uri contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", new File(uri.getPath()));
 
-			newIntent.setDataAndType(contentUri, mimeType);
-			newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(newIntent, PackageManager.MATCH_DEFAULT_ONLY);
-			for (ResolveInfo resolveInfo : resInfoList) {
-				String packageName = resolveInfo.activityInfo.packageName;
-				grantUriPermission(packageName, contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+				newIntent.setDataAndType(contentUri, mimeType);
+				newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(newIntent, PackageManager.MATCH_DEFAULT_ONLY);
+				for (ResolveInfo resolveInfo : resInfoList) {
+					String packageName = resolveInfo.activityInfo.packageName;
+					grantUriPermission(packageName, contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+				}
+				try {
+					startActivity(newIntent);
+				} catch (ActivityNotFoundException e) {
+					Snackbar.make(mainLayout, "Sorry, I found no handler for this type of file.", Snackbar.LENGTH_SHORT).show();
+				} catch (FileUriExposedException ex) {
+					Snackbar.make(mainLayout, "FileUriExposedException", Snackbar.LENGTH_SHORT).show();
+				}
 			}
-			try {
-				startActivity(newIntent);
-			} catch (ActivityNotFoundException e) {
-				Snackbar.make(mainLayout, "Sorry, I found no handler for this type of file.", Snackbar.LENGTH_SHORT).show();
-			} catch (FileUriExposedException ex) {
-				Snackbar.make(mainLayout, "FileUriExposedException", Snackbar.LENGTH_SHORT).show();
-			}
+		} else if (item.getText() != null) {
+			handleText(item.getText());
+		} else {
+			Log.e(TAG, "Unknown content: " + clipData);
 		}
+	}
+
+	private void handleText(CharSequence text) {
+		TextView tv = new TextView(this);
+		tv.setText(text);
+
+		updateTitle("Text snippet");
+		updateView(tv);
 	}
 
 	private void handleImage(Uri uri) {
@@ -176,13 +191,19 @@ public class MainActivity extends AppCompatActivity implements View.OnDragListen
 		Bitmap bmp = BitmapFactory.decodeFile(uri.getPath());
 		iv.setImageBitmap(bmp);
 
-		FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.UNSPECIFIED_GRAVITY);
-		params.gravity = Gravity.CENTER;
-		iv.setLayoutParams(params);
+		updateTitle(new File(uri.getPath()).getName());
 		updateView(iv);
 	}
 
+	private void updateTitle(String text){
+		getSupportActionBar().setTitle(text);
+	}
+
 	private void updateView(View v) {
+		FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.UNSPECIFIED_GRAVITY);
+		params.gravity = Gravity.CENTER;
+		v.setLayoutParams(params);
+
 		contentLayout.removeAllViews();
 		contentLayout.addView(v);
 		contentLayout.invalidate();
